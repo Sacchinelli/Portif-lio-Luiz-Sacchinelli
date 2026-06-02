@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luiz G. Sachinelli — Data & Automation Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #050810;
+  --bg1:      #090d14;
+  --bg2:      #0e1420;
+  --bg3:      #131b28;
+  --border:   rgba(255,255,255,0.08);
+  --border2:  rgba(255,255,255,0.14);
+  --blue:     #2f8fff;
+  --blue-b:   #5aaeff;
+  --cyan:     #00d4ff;
+  --green:    #00e87a;
+  --green-b:  #33ff99;
+  --orange:   #ff9500;
+  --orange-b: #ffb340;
+  --red:      #ff453a;
+  --white:    #f0f4ff;
+  --t1:       #e8edf8;
+  --t2:       #9ba8be;
+  --t3:       #5c6a82;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Space Grotesk', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:0;
+}
+
+/* ── GRID ── */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(47,143,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(47,143,255,0.04) 1px,transparent 1px);
+  background-size: 60px 60px;
+  pointer-events:none; z-index:0;
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 3rem;
+  background: rgba(5,8,16,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-id {
+  font-family: var(--mono);
+  font-size:13px;
+  color: var(--green);
+  letter-spacing:.04em;
+}
+.nav-id em { color:var(--t3); font-style:normal; }
+
+.nav-links { display:flex; gap:2.5rem; list-style:none; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size:12px; letter-spacing:.1em;
+  color: var(--t2);
+  text-decoration:none;
+  transition:color .2s;
+}
+.nav-links a:hover { color:var(--blue-b); }
+
+.nav-pill {
+  display:flex; align-items:center; gap:7px;
+  font-family:var(--mono); font-size:12px;
+  color:var(--green);
+  background:rgba(0,232,122,.08);
+  border:1px solid rgba(0,232,122,.2);
+  padding:5px 12px; border-radius:99px;
+}
+.nav-pill-dot {
+  width:6px; height:6px;
+  background:var(--green); border-radius:50%;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ── HERO ── */
+.hero {
+  position:relative; z-index:2;
+  min-height:100vh;
+  display:grid;
+  grid-template-columns: 1fr 420px;
+  align-items:center;
+  gap:4rem;
+  max-width:1200px; margin:0 auto;
+  padding: 100px 3rem 3rem;
+}
+
+.hero-eyebrow {
+  font-family:var(--mono);
+  font-size:12px; letter-spacing:.25em;
+  color:var(--orange);
+  margin-bottom:1.5rem;
+  display:flex; align-items:center; gap:10px;
+}
+.hero-eyebrow::before {
+  content:'';
+  display:block; width:32px; height:1px;
+  background:var(--orange);
+}
+
+.hero-name {
+  font-family:var(--sans);
+  font-size: clamp(52px,6vw,80px);
+  font-weight:700;
+  line-height:1.0;
+  letter-spacing:-0.03em;
+  color:var(--white);
+  margin-bottom:.6rem;
+}
+.hero-name .hl { color:var(--blue-b); }
+
+.hero-role {
+  font-family:var(--mono);
+  font-size:clamp(14px,1.6vw,17px);
+  color:var(--t2);
+  margin-bottom:2.5rem;
+  line-height:1.8;
+}
+.hero-role strong { color:var(--green); font-weight:500; }
+
+/* Terminal */
+.term {
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:2.5rem;
+  max-width:560px;
+}
+.term-bar {
+  background:var(--bg3);
+  padding:10px 16px;
+  display:flex; align-items:center; gap:7px;
+  border-bottom:1px solid var(--border);
+}
+.term-dot { width:11px; height:11px; border-radius:50%; }
+.term-dot.r{background:#ff5f57} .term-dot.y{background:#febc2e} .term-dot.g{background:#28c840}
+.term-title { margin-left:auto; margin-right:auto; font-family:var(--mono); font-size:11px; color:var(--t3); }
+.term-body { padding:20px 22px; }
+.term-line {
+  font-family:var(--mono); font-size:13.5px;
+  line-height:2.1; display:block;
+}
+.p { color:var(--green); }
+.c { color:var(--blue-b); }
+.s { color:var(--orange); }
+.v { color:var(--t1); }
+.cm{ color:var(--t3); }
+.cursor {
+  display:inline-block; width:9px; height:15px;
+  background:var(--green); vertical-align:middle;
+  margin-left:2px;
+  animation: cur 1s step-end infinite;
+}
+@keyframes cur { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.cta { display:flex; gap:1rem; flex-wrap:wrap; }
+
+.btn {
+  font-family:var(--mono); font-size:13px;
+  letter-spacing:.08em;
+  padding:13px 26px; border-radius:8px;
+  text-decoration:none;
+  display:inline-flex; align-items:center; gap:9px;
+  transition:all .2s; border:none; cursor:pointer;
+}
+.btn-blue {
+  background:var(--blue);
+  color:#fff;
+}
+.btn-blue:hover { background:var(--blue-b); transform:translateY(-2px); box-shadow:0 10px 30px rgba(47,143,255,.35); }
+.btn-outline {
+  background:transparent;
+  color:var(--t1);
+  border:1px solid var(--border2);
+}
+.btn-outline:hover { border-color:var(--blue); color:var(--blue-b); }
+
+/* HERO RIGHT — GRAPH SVG */
+.hero-graph {
+  position:relative;
+}
+.hero-graph svg { width:100%; height:auto; }
+
+/* ── SECTIONS ── */
+.wrap { position:relative; z-index:2; max-width:1200px; margin:0 auto; padding:90px 3rem; }
+
+.divider {
+  position:relative; z-index:2;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--border2), transparent);
+  margin:0 3rem;
+}
+
+.sh {
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:3.5rem;
+}
+.sh-tag {
+  font-family:var(--mono); font-size:11px; letter-spacing:.22em;
+  color:var(--orange-b);
+  background:rgba(255,149,0,.1);
+  border:1px solid rgba(255,149,0,.22);
+  padding:5px 11px; border-radius:5px;
+}
+.sh-title {
+  font-family:var(--sans); font-size:30px; font-weight:700;
+  color:var(--white); letter-spacing:-.01em;
+}
+.sh-line { flex:1; height:1px; background:linear-gradient(90deg,var(--border2),transparent); }
+
+/* ── STACK GRID ── */
+.stack-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:14px; overflow:hidden;
+  margin-bottom:2rem;
+}
+
+.stack-cell {
+  background:var(--bg1);
+  padding:28px 26px;
+  position:relative;
+  transition:background .2s;
+}
+.stack-cell:hover { background:var(--bg2); }
+
+.stack-cell-label {
+  font-family:var(--mono); font-size:10px; letter-spacing:.2em;
+  margin-bottom:16px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+}
+.stack-cell-label.blue { color:var(--blue-b); border-color:rgba(47,143,255,.2); }
+.stack-cell-label.green { color:var(--green); border-color:rgba(0,232,122,.2); }
+.stack-cell-label.orange { color:var(--orange-b); border-color:rgba(255,149,0,.2); }
+.stack-cell-label.red { color:var(--red); border-color:rgba(255,69,58,.2); }
+.stack-cell-label.cyan { color:var(--cyan); border-color:rgba(0,212,255,.2); }
+.stack-cell-label.white { color:var(--t2); border-color:var(--border); }
+
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip {
+  font-family:var(--mono); font-size:12px;
+  padding:5px 11px; border-radius:5px;
+  line-height:1;
+}
+.chip.blue   { background:rgba(47,143,255,.12);  color:#7ec4ff; border:1px solid rgba(47,143,255,.25); }
+.chip.green  { background:rgba(0,232,122,.1);    color:#33ff88; border:1px solid rgba(0,232,122,.22); }
+.chip.orange { background:rgba(255,149,0,.1);    color:#ffb340; border:1px solid rgba(255,149,0,.22); }
+.chip.red    { background:rgba(255,69,58,.1);    color:#ff7066; border:1px solid rgba(255,69,58,.22); }
+.chip.cyan   { background:rgba(0,212,255,.1);    color:#4de0ff; border:1px solid rgba(0,212,255,.22); }
+.chip.gray   { background:rgba(255,255,255,.06); color:#9ba8be; border:1px solid rgba(255,255,255,.1); }
+
+/* SKILL BARS */
+.sbar { margin-top:14px; display:flex; flex-direction:column; gap:10px; }
+.sbar-row { display:flex; flex-direction:column; gap:5px; }
+.sbar-meta { display:flex; justify-content:space-between; font-family:var(--mono); font-size:12px; }
+.sbar-meta span:first-child { color:var(--t1); }
+.sbar-meta span:last-child  { color:var(--t3); }
+.sbar-track { height:3px; background:rgba(255,255,255,.07); border-radius:2px; overflow:hidden; }
+.sbar-fill  { height:100%; border-radius:2px; }
+.fill-blue   { background:linear-gradient(90deg,#1060cc,var(--blue-b)); }
+.fill-green  { background:linear-gradient(90deg,#009944,var(--green-b)); }
+.fill-orange { background:linear-gradient(90deg,#cc7000,var(--orange-b)); }
+.fill-red    { background:linear-gradient(90deg,#cc1010,#ff7066); }
+.fill-cyan   { background:linear-gradient(90deg,#008ccc,var(--cyan)); }
+
+/* ── EXPERIENCE ── */
+.exp-list { display:flex; flex-direction:column; gap:0; }
+
+.exp-item {
+  display:grid;
+  grid-template-columns:160px 1fr;
+  gap:0 3rem;
+  position:relative;
+  padding-bottom:3rem;
+}
+.exp-item:last-child { padding-bottom:0; }
+
+/* vertical line */
+.exp-item::before {
+  content:'';
+  position:absolute;
+  left:160px; top:0; bottom:0;
+  width:1px;
+  background:var(--border2);
+}
+.exp-item:last-child::before { bottom:auto; height:30px; }
+
+.exp-time {
+  padding-top:4px;
+  text-align:right;
+  padding-right:3rem;
+  font-family:var(--mono); font-size:12px;
+  color:var(--t3);
+  line-height:1.7;
+}
+.exp-time strong { display:block; color:var(--t2); font-weight:500; margin-bottom:3px; }
+
+.exp-node {
+  position:absolute;
+  left:calc(160px - 5px);
+  top:6px;
+  width:11px; height:11px;
+  border-radius:50%;
+  border:2px solid var(--bg);
+  z-index:2;
+}
+.exp-node.active { background:var(--blue); box-shadow:0 0 14px rgba(47,143,255,.6); }
+.exp-node.dim    { background:var(--t3); }
+
+.exp-body { padding-left:3rem; }
+
+.exp-role {
+  font-family:var(--sans); font-size:20px; font-weight:700;
+  color:var(--white); margin-bottom:2px;
+}
+.exp-co {
+  font-family:var(--mono); font-size:13px;
+  color:var(--blue-b); margin-bottom:1rem;
+}
+.exp-tag { color:var(--t3); font-family:var(--mono); font-size:11px; letter-spacing:.1em; }
+
+.exp-list-items {
+  list-style:none;
+  display:flex; flex-direction:column; gap:8px;
+  margin-bottom:1rem;
+}
+.exp-list-items li {
+  font-size:14px; color:var(--t2);
+  padding-left:1.5rem; position:relative;
+  line-height:1.7;
+}
+.exp-list-items li::before {
+  content:'▸';
+  position:absolute; left:0;
+  color:var(--blue);
+}
+
+/* PROJECT CARD */
+.proj-card {
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:12px;
+  padding:28px 30px;
+  margin-top:1.5rem;
+  position:relative;
+  overflow:hidden;
+}
+.proj-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--blue), var(--cyan), var(--green));
+}
+.proj-label {
+  font-family:var(--mono); font-size:11px; letter-spacing:.2em;
+  color:var(--orange-b); margin-bottom:.75rem;
+}
+.proj-title {
+  font-family:var(--sans); font-size:20px; font-weight:700;
+  color:var(--white); margin-bottom:.75rem;
+}
+.proj-desc {
+  font-size:14px; color:var(--t2); line-height:1.75;
+  margin-bottom:1.25rem;
+}
+.proj-items {
+  display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  margin-bottom:1.25rem;
+}
+.proj-item {
+  font-family:var(--mono); font-size:12px; color:var(--t2);
+  display:flex; align-items:flex-start; gap:8px;
+}
+.proj-item::before { content:'✓'; color:var(--green); flex-shrink:0; }
+
+/* ── ABOUT ── */
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; }
+
+.about-text {
+  font-size:15px; color:var(--t2); line-height:1.9;
+}
+.about-text strong { color:var(--t1); font-weight:600; }
+.about-text .hl-b { color:var(--blue-b); }
+.about-text .hl-g { color:var(--green); }
+.about-text .hl-o { color:var(--orange-b); }
+.about-text p+p { margin-top:1rem; }
+
+.certs { display:flex; flex-direction:column; gap:10px; }
+.cert {
+  display:flex; align-items:center; gap:14px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px 16px;
+  transition:all .2s;
+}
+.cert:hover { border-color:var(--border2); background:var(--bg3); }
+.cert-ico {
+  width:34px; height:34px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px;
+}
+.cert-ico.b { background:rgba(47,143,255,.12); }
+.cert-ico.g { background:rgba(0,232,122,.1);   }
+.cert-ico.o { background:rgba(255,149,0,.1);   }
+.cert-text { flex:1; }
+.cert-name { font-size:14px; color:var(--t1); font-weight:500; }
+.cert-sub  { font-family:var(--mono); font-size:11px; color:var(--t3); margin-top:2px; }
+
+/* ── CONTACT ── */
+.contact-row {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1rem;
+}
+.cc {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px; padding:28px 16px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  text-decoration:none;
+  transition:all .25s;
+  color:var(--t1);
+}
+.cc:hover { border-color:var(--blue); transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,.4); }
+.cc-icon { font-size:26px; }
+.cc-lbl { font-family:var(--mono); font-size:10px; letter-spacing:.2em; color:var(--t3); }
+.cc-val { font-size:13px; color:var(--t1); text-align:center; line-height:1.4; }
+
+/* ── FOOTER ── */
+footer {
+  position:relative; z-index:2;
+  border-top:1px solid var(--border);
+  padding:2rem 3rem;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.ft-l { font-family:var(--mono); font-size:12px; color:var(--t3); }
+.ft-l span { color:var(--green); }
+.ft-r { font-family:var(--mono); font-size:11px; color:var(--t3); }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:1px; background:var(--border);
+  border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+  margin-bottom:4rem;
+}
+.stat { background:var(--bg1); padding:24px 20px; }
+.stat-n {
+  font-family:var(--sans); font-size:38px; font-weight:700;
+  line-height:1; margin-bottom:6px;
+}
+.stat-l { font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:var(--t3); }
+.sn-blue   { color:var(--blue-b); }
+.sn-green  { color:var(--green);  }
+.sn-orange { color:var(--orange-b); }
+.sn-red    { color:var(--red); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-id"><em>~/</em>luiz-sachinelli</div>
+  <ul class="nav-links">
+    <li><a href="#stack">stack</a></li>
+    <li><a href="#exp">experiência</a></li>
+    <li><a href="#sobre">sobre</a></li>
+    <li><a href="#contato">contato</a></li>
+  </ul>
+  <div class="nav-pill"><div class="nav-pill-dot"></div>open to work</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Data &amp; Automation Engineer · Campinas/SP</div>
+    <h1 class="hero-name">Luiz<br><span class="hl">Guilherme</span><br>Sachinelli</h1>
+    <p class="hero-role">
+      Desenvolvendo <strong>automações</strong> e <strong>pipelines de dados</strong><br>
+      que eliminam o esforço manual e geram inteligência<br>
+      operacional em escala.
+    </p>
+
+    <div class="term">
+      <div class="term-bar">
+        <div class="term-dot r"></div>
+        <div class="term-dot y"></div>
+        <div class="term-dot g"></div>
+        <div class="term-title">luiz@dev — bash</div>
+      </div>
+      <div class="term-body">
+        <span class="term-line"><span class="p">❯</span> <span class="c">python</span> <span class="s">analyst.py</span> <span class="cm">--profile luiz</span></span>
+        <span class="term-line"><span class="cm"># Carregando perfil técnico...</span></span>
+        <span class="term-line"><span class="p">✓</span> <span class="v">Stack: Python · SQL · ML · RPA · Power BI</span></span>
+        <span class="term-line"><span class="p">✓</span> <span class="v">Domínio: Automação Bancária · ETL · Analytics</span></span>
+        <span class="term-line"><span class="p">✓</span> <span class="v">Status: <span style="color:var(--green)">disponível para oportunidades</span></span><span class="cursor"></span></span>
+      </div>
+    </div>
+
+    <div class="cta">
+      <a href="https://github.com/Sacchinelli" target="_blank" class="btn btn-blue">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+        GitHub
+      </a>
+      <a href="https://www.linkedin.com/in/luiz-guilherme-sachinelli-1b0156203/" target="_blank" class="btn btn-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+        LinkedIn
+      </a>
+      <a href="mailto:luizsachinelli@hotmail.com" class="btn btn-outline">
+        ✉ Email
+      </a>
+    </div>
+  </div>
+
+  <!-- RIGHT: TECH GRAPH -->
+  <div class="hero-graph">
+    <svg viewBox="0 0 420 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="gC" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#2f8fff" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#2f8fff" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Glow center -->
+      <circle cx="210" cy="220" r="90" fill="url(#gC)" opacity="0.6"/>
+
+      <!-- Connector lines -->
+      <line x1="210" y1="220" x2="80"  y2="80"  stroke="#2f8fff" stroke-width="0.8" stroke-opacity="0.35"/>
+      <line x1="210" y1="220" x2="350" y2="70"  stroke="#00e87a" stroke-width="0.8" stroke-opacity="0.3"/>
+      <line x1="210" y1="220" x2="380" y2="220" stroke="#2f8fff" stroke-width="0.8" stroke-opacity="0.35"/>
+      <line x1="210" y1="220" x2="340" y2="370" stroke="#ff9500" stroke-width="0.8" stroke-opacity="0.3"/>
+      <line x1="210" y1="220" x2="90"  y2="370" stroke="#00d4ff" stroke-width="0.8" stroke-opacity="0.3"/>
+      <line x1="210" y1="220" x2="50"  y2="220" stroke="#ff453a" stroke-width="0.8" stroke-opacity="0.3"/>
+      <line x1="80"  y1="80"  x2="350" y2="70"  stroke="rgba(255,255,255,0.06)" stroke-width="0.6"/>
+      <line x1="350" y1="70"  x2="380" y2="220" stroke="rgba(255,255,255,0.06)" stroke-width="0.6"/>
+      <line x1="380" y1="220" x2="340" y2="370" stroke="rgba(255,255,255,0.06)" stroke-width="0.6"/>
+      <line x1="340" y1="370" x2="90"  y2="370" stroke="rgba(255,255,255,0.06)" stroke-width="0.6"/>
+      <line x1="90"  y1="370" x2="50"  y2="220" stroke="rgba(255,255,255,0.06)" stroke-width="0.6"/>
+      <line x1="50"  y1="220" x2="80"  y2="80"  stroke="rgba(255,255,255,0.06)" stroke-width="0.6"/>
+      <!-- extra cross -->
+      <line x1="80"  y1="80"  x2="340" y2="370" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+      <line x1="350" y1="70"  x2="90"  y2="370" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+
+      <!-- CENTER NODE -->
+      <circle cx="210" cy="220" r="36" fill="#090d14" stroke="#2f8fff" stroke-width="1.5" filter="url(#glow2)"/>
+      <circle cx="210" cy="220" r="20" fill="#2f8fff" opacity="0.18"/>
+      <circle cx="210" cy="220" r="8"  fill="#2f8fff"/>
+      <!-- orbit ring -->
+      <circle cx="210" cy="220" r="52" fill="none" stroke="rgba(47,143,255,0.15)" stroke-width="1" stroke-dasharray="5 8"/>
+
+      <!-- PYTHON -->
+      <circle cx="80" cy="80" r="28" fill="#090d14" stroke="#5aaeff" stroke-width="1.2"/>
+      <circle cx="80" cy="80" r="8"  fill="#5aaeff" opacity="0.7"/>
+      <text x="80" y="55" text-anchor="middle" fill="#5aaeff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="500">Python</text>
+
+      <!-- SQL -->
+      <circle cx="350" cy="70" r="24" fill="#090d14" stroke="#00e87a" stroke-width="1.2"/>
+      <circle cx="350" cy="70" r="7"  fill="#00e87a" opacity="0.7"/>
+      <text x="350" y="45" text-anchor="middle" fill="#00e87a" font-size="11" font-family="JetBrains Mono,monospace" font-weight="500">SQL</text>
+
+      <!-- ML -->
+      <circle cx="380" cy="220" r="24" fill="#090d14" stroke="#ff9500" stroke-width="1.2"/>
+      <circle cx="380" cy="220" r="7"  fill="#ff9500" opacity="0.7"/>
+      <text x="415" y="224" text-anchor="middle" fill="#ff9500" font-size="11" font-family="JetBrains Mono,monospace" font-weight="500">ML</text>
+
+      <!-- Power BI -->
+      <circle cx="340" cy="370" r="28" fill="#090d14" stroke="#ffb340" stroke-width="1.2"/>
+      <circle cx="340" cy="370" r="8"  fill="#ffb340" opacity="0.7"/>
+      <text x="340" y="408" text-anchor="middle" fill="#ffb340" font-size="10" font-family="JetBrains Mono,monospace" font-weight="500">Power BI</text>
+
+      <!-- RPA -->
+      <circle cx="90" cy="370" r="24" fill="#090d14" stroke="#00d4ff" stroke-width="1.2"/>
+      <circle cx="90" cy="370" r="7"  fill="#00d4ff" opacity="0.7"/>
+      <text x="90" y="408" text-anchor="middle" fill="#00d4ff" font-size="11" font-family="JetBrains Mono,monospace" font-weight="500">RPA</text>
+
+      <!-- Oracle -->
+      <circle cx="50" cy="220" r="24" fill="#090d14" stroke="#ff453a" stroke-width="1.2"/>
+      <circle cx="50" cy="220" r="7"  fill="#ff453a" opacity="0.7"/>
+      <text x="14" y="224" text-anchor="middle" fill="#ff453a" font-size="10" font-family="JetBrains Mono,monospace" font-weight="500">Oracle</text>
+
+      <!-- Center label -->
+      <text x="210" y="218" text-anchor="middle" fill="white" font-size="9" font-family="JetBrains Mono,monospace" font-weight="600" opacity="0.9">LGS</text>
+      <text x="210" y="229" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="7" font-family="JetBrains Mono,monospace">CORE</text>
+
+      <!-- Floating dots -->
+      <circle cx="170" cy="140" r="2.5" fill="#2f8fff" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="280" cy="155" r="2" fill="#00e87a" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.9;0.4" dur="4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="300" cy="300" r="2.5" fill="#ff9500" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="140" cy="310" r="2" fill="#00d4ff" opacity="0.4">
+        <animate attributeName="opacity" values="0.4;0.9;0.4" dur="3.5s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STACK -->
+<div class="wrap" id="stack">
+  <div class="sh">
+    <span class="sh-tag">TECNOLOGIAS</span>
+    <h2 class="sh-title">Stack Técnico</h2>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="stack-grid">
+
+    <div class="stack-cell">
+      <div class="stack-cell-label blue">LINGUAGENS & DEV</div>
+      <div class="chips">
+        <span class="chip blue">Python</span>
+        <span class="chip blue">SQL</span>
+        <span class="chip gray">C / C++</span>
+        <span class="chip gray">Java JNLP</span>
+        <span class="chip gray">APIs REST</span>
+        <span class="chip gray">Git / GitHub</span>
+      </div>
+      <div class="sbar">
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Python</span><span>avançado</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-blue" style="width:90%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>SQL</span><span>avançado</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-blue" style="width:86%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>C / C++</span><span>intermediário</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-blue" style="width:52%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack-cell">
+      <div class="stack-cell-label green">AUTOMAÇÃO & IA</div>
+      <div class="chips">
+        <span class="chip green">RPA</span>
+        <span class="chip green">Machine Learning</span>
+        <span class="chip green">ETL</span>
+        <span class="chip gray">Process Mining</span>
+        <span class="chip gray">Scikit-learn</span>
+      </div>
+      <div class="sbar">
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>RPA / Automação</span><span>avançado</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-green" style="width:90%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Machine Learning</span><span>intermediário</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-green" style="width:65%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>ETL / Pipelines</span><span>intermediário</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-green" style="width:70%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack-cell">
+      <div class="stack-cell-label orange">DADOS & ANALYTICS</div>
+      <div class="chips">
+        <span class="chip orange">Power BI</span>
+        <span class="chip orange">Oracle DB</span>
+        <span class="chip orange">MySQL</span>
+        <span class="chip gray">KPIs</span>
+        <span class="chip gray">Excel Avançado</span>
+        <span class="chip gray">Modelagem</span>
+      </div>
+      <div class="sbar">
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Power BI</span><span>intermediário</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-orange" style="width:70%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Oracle / MySQL</span><span>intermediário</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-orange" style="width:72%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Excel Avançado</span><span>avançado</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-orange" style="width:88%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack-cell">
+      <div class="stack-cell-label red">SISTEMAS BANCÁRIOS</div>
+      <div class="chips">
+        <span class="chip red">Dataprev</span>
+        <span class="chip red">Topaz</span>
+        <span class="chip gray">Salesforce</span>
+        <span class="chip gray">SLA / Backoffice</span>
+      </div>
+      <div class="sbar">
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Dataprev</span><span>avançado</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-red" style="width:85%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Topaz</span><span>avançado</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-red" style="width:82%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Salesforce CRM</span><span>intermediário</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-red" style="width:60%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack-cell">
+      <div class="stack-cell-label cyan">INFRAESTRUTURA & CLOUD</div>
+      <div class="chips">
+        <span class="chip cyan">Git / GitHub</span>
+        <span class="chip cyan">APIs REST</span>
+        <span class="chip gray">Microsoft 365</span>
+        <span class="chip gray">Hardware</span>
+        <span class="chip gray">Linux</span>
+      </div>
+      <div class="sbar">
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>Git / GitHub</span><span>intermediário</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-cyan" style="width:68%"></div></div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-meta"><span>APIs REST</span><span>intermediário</span></div>
+          <div class="sbar-track"><div class="sbar-fill fill-cyan" style="width:62%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack-cell">
+      <div class="stack-cell-label white">METODOLOGIAS</div>
+      <div class="chips">
+        <span class="chip gray">Agile / Scrum</span>
+        <span class="chip gray">Análise de Dados</span>
+        <span class="chip gray">Data-Driven</span>
+        <span class="chip gray">Eficiência Operacional</span>
+        <span class="chip gray">Gerenciamento de Projetos</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- EXPERIENCE -->
+<div class="wrap" id="exp">
+  <div class="sh">
+    <span class="sh-tag">TRAJETÓRIA</span>
+    <h2 class="sh-title">Experiência Técnica</h2>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="exp-list">
+
+    <!-- Agibank -->
+    <div class="exp-item">
+      <div class="exp-time">
+        <strong>05/2025 → atual</strong>
+        Campinas, SP
+      </div>
+      <div class="exp-node active"></div>
+      <div class="exp-body">
+        <div class="exp-role">Data &amp; Operations Analyst</div>
+        <div class="exp-co">Banco Agibank</div>
+        <ul class="exp-list-items">
+          <li>Desenvolvimento de automações em <strong style="color:var(--t1)">Python</strong> integradas a sistemas financeiros via <strong style="color:var(--t1)">Java (JNLP)</strong></li>
+          <li>Criação e manutenção de consultas e tabelas em <strong style="color:var(--t1)">SQL / Oracle</strong> para suporte à decisão</li>
+          <li>Estruturação de bases analíticas e criação de indicadores estratégicos (KPIs, SLAs)</li>
+          <li>Projetos de <strong style="color:var(--t1)">Machine Learning</strong> para classificação e otimização de processos operacionais</li>
+          <li>Referência técnica em iniciativas de automação e inovação da área</li>
+        </ul>
+        <div class="chips" style="margin-bottom:1.5rem">
+          <span class="chip blue">Python</span>
+          <span class="chip blue">SQL</span>
+          <span class="chip green">Machine Learning</span>
+          <span class="chip green">RPA</span>
+          <span class="chip orange">Oracle DB</span>
+          <span class="chip gray">Java JNLP</span>
+          <span class="chip gray">Dataprev</span>
+          <span class="chip gray">Topaz</span>
+        </div>
+
+        <!-- Project card -->
+        <div class="proj-card">
+          <div class="proj-label">PROJETO INTERNO · AGIBANK · 2025</div>
+          <div class="proj-title">Plataforma de Automação Operacional</div>
+          <p class="proj-desc">Solução end-to-end para automação do backoffice bancário — integrando sistemas legados, modernizando fluxos operacionais e aplicando ML para eliminar tarefas repetitivas e gerar inteligência em tempo real.</p>
+          <div class="proj-items">
+            <div class="proj-item">Automação de consultas operacionais</div>
+            <div class="proj-item">Integração entre sistemas financeiros</div>
+            <div class="proj-item">Automação do backoffice</div>
+            <div class="proj-item">Estruturação de bases analíticas</div>
+            <div class="proj-item">Criação de indicadores operacionais</div>
+            <div class="proj-item">ML para classificação de processos</div>
+            <div class="proj-item">Redução mensurável do esforço manual</div>
+          </div>
+          <div class="chips" style="margin-top:1rem">
+            <span class="chip blue">Python</span>
+            <span class="chip blue">SQL</span>
+            <span class="chip gray">Java JNLP</span>
+            <span class="chip green">Machine Learning</span>
+            <span class="chip orange">Power BI</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Técnico em Informática (formação, não emprego) como contexto -->
+    <div class="exp-item" style="padding-bottom:0">
+      <div class="exp-time">
+        <strong>2019 → 2022</strong>
+        Formação Técnica
+      </div>
+      <div class="exp-node dim"></div>
+      <div class="exp-body">
+        <div class="exp-role">Técnico em Informática</div>
+        <div class="exp-co" style="color:var(--t3)">Microcamp · 1200h</div>
+        <ul class="exp-list-items">
+          <li>Fundamentos de hardware, redes, sistemas operacionais e manutenção de computadores</li>
+          <li>Lógica de programação, introdução a banco de dados e pacote Office avançado</li>
+          <li>Base técnica que sustenta toda a atuação profissional posterior em TI e dados</li>
+        </ul>
+        <div class="chips">
+          <span class="chip gray">Hardware</span>
+          <span class="chip gray">Redes</span>
+          <span class="chip gray">Lógica de Programação</span>
+          <span class="chip gray">Office Avançado</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<div class="wrap" id="sobre">
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n sn-blue">1+</div><div class="stat-l">ANO NO SETOR BANCÁRIO</div></div>
+    <div class="stat"><div class="stat-n sn-green">∞</div><div class="stat-l">PROCESSOS AUTOMATIZADOS</div></div>
+    <div class="stat"><div class="stat-n sn-orange">5+</div><div class="stat-l">STACKS DOMINADOS</div></div>
+    <div class="stat"><div class="stat-n sn-red">23</div><div class="stat-l">ANOS · CAMPINAS/SP</div></div>
+  </div>
+
+  <div class="sh">
+    <span class="sh-tag">SOBRE</span>
+    <h2 class="sh-title">Perfil & Formação</h2>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="about-grid">
+    <div>
+      <div class="about-text">
+        <p>Profissional com foco em <span class="hl-b">automação de processos</span>, <span class="hl-g">análise de dados</span> e <span class="hl-o">inteligência operacional</span> aplicada ao setor bancário. Atuo como referência técnica no Agibank, liderando iniciativas que reduzem esforço manual e geram valor através da tecnologia.</p>
+        <p>Especialista em <strong>Python</strong> para automação — incluindo integrações com sistemas Java/JNLP — e em <strong>SQL/Oracle</strong> para construção de bases analíticas e indicadores estratégicos. Aplicando <strong>Machine Learning</strong> para classificação e otimização de processos complexos.</p>
+        <p>Graduando em <strong>Ciência da Computação</strong> (Unimetrocamp Wyden, 2025–2029), certificado pela <strong>Salesforce</strong> e com certificações IBM/Coursera em SQL e Python. Busco expandir minha atuação em <span class="hl-b">Engenharia de Dados</span>, <span class="hl-g">IA</span> e <span class="hl-o">Desenvolvimento de Software</span>.</p>
+      </div>
+    </div>
+
+    <div class="certs">
+      <div class="cert">
+        <div class="cert-ico b">🎓</div>
+        <div class="cert-text">
+          <div class="cert-name">Ciência da Computação</div>
+          <div class="cert-sub">Unimetrocamp Wyden · 2025 → 2029</div>
+        </div>
+      </div>
+      <div class="cert">
+        <div class="cert-ico o">🏅</div>
+        <div class="cert-text">
+          <div class="cert-name">Salesforce Certification</div>
+          <div class="cert-sub">Agibank · 2025</div>
+        </div>
+      </div>
+      <div class="cert">
+        <div class="cert-ico b">🗄️</div>
+        <div class="cert-text">
+          <div class="cert-name">SQL Server</div>
+          <div class="cert-sub">IBM · Coursera · 2026</div>
+        </div>
+      </div>
+      <div class="cert">
+        <div class="cert-ico g">🐍</div>
+        <div class="cert-text">
+          <div class="cert-name">Python · Lógica de Programação</div>
+          <div class="cert-sub">Coursera · 2026</div>
+        </div>
+      </div>
+      <div class="cert">
+        <div class="cert-ico o">💻</div>
+        <div class="cert-text">
+          <div class="cert-name">Técnico em Informática</div>
+          <div class="cert-sub">Microcamp · 1200h</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<div class="wrap" id="contato">
+  <div class="sh">
+    <span class="sh-tag">CONTATO</span>
+    <h2 class="sh-title">Conecte-se</h2>
+    <div class="sh-line"></div>
+  </div>
+  <div class="contact-row">
+    <a href="https://github.com/Sacchinelli" target="_blank" class="cc">
+      <span class="cc-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.5.5.09.66-.22.66-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8c.85 0 1.71.11 2.51.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.16.58.67.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
+      </span>
+      <div class="cc-lbl">GITHUB</div>
+      <div class="cc-val">github.com/Sacchinelli</div>
+    </a>
+    <a href="https://www.linkedin.com/in/luiz-guilherme-sachinelli-1b0156203/" target="_blank" class="cc">
+      <span class="cc-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+      </span>
+      <div class="cc-lbl">LINKEDIN</div>
+      <div class="cc-val">luiz-guilherme-sachinelli</div>
+    </a>
+    <a href="mailto:luizsachinelli@hotmail.com" class="cc">
+      <span class="cc-icon">✉️</span>
+      <div class="cc-lbl">EMAIL</div>
+      <div class="cc-val">luizsachinelli@hotmail.com</div>
+    </a>
+    <a href="tel:+5519994337726" class="cc">
+      <span class="cc-icon">📱</span>
+      <div class="cc-lbl">TELEFONE</div>
+      <div class="cc-val">(19) 99433-7726</div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-l"><span>luiz-sachinelli</span> · Campinas, SP · 2026</div>
+  <div class="ft-r">Python · SQL · ML · RPA · Power BI</div>
+</footer>
+
+</body>
+</html>
